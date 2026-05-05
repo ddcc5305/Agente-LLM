@@ -1,30 +1,8 @@
-"""Carga de configuración desde entorno (.env soportado vía python-dotenv).
-
-Centralizamos aquí la lectura de variables para que el resto del paquete no
-toque ``os.environ`` directamente. Esto facilita cambiar Ollama local por el
-endpoint UPV sin tocar el dominio.
-"""
-
 from __future__ import annotations
 
 import os
 from dataclasses import dataclass
 from pathlib import Path
-
-try:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-except ImportError:
-    pass
-
-
-def _bool(name: str, default: bool) -> bool:
-    raw = os.getenv(name)
-    if raw is None:
-        return default
-    return raw.strip().lower() in {"1", "true", "yes", "si", "sí"}
-
 
 @dataclass(frozen=True)
 class Settings:
@@ -40,18 +18,34 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
+        # Detectamos la raíz del proyecto (donde está .git)
         repo_root = Path(__file__).resolve().parents[2]
         return cls(
             ollama_url=os.getenv("OLLAMA_URL", "http://localhost:11434/api"),
-            llm_model=os.getenv("LLM_MODEL", "gemma2:27b"),
+            llm_model=os.getenv("LLM_MODEL", "gemma3:4b"), # Modelo local sugerido
             embed_model=os.getenv("EMBED_MODEL", "nomic-embed-text"),
-            verify_ssl=_bool("VERIFY_SSL", True),
-            chroma_path=Path(os.getenv("CHROMA_PATH", str(repo_root / "data" / "chroma"))),
-            collection_name=os.getenv("COLLECTION_NAME", "gti_orienta"),
-            api_host=os.getenv("API_HOST", "127.0.0.1"),
-            api_port=int(os.getenv("API_PORT", "8000")),
-            corpus_dir=Path(os.getenv("CORPUS_DIR", str(repo_root / "corpus"))),
+            verify_ssl=True,
+            chroma_path=repo_root / "data" / "chroma",
+            collection_name="dni_valencia", # Cambiado para el caso DNI
+            api_host="127.0.0.1",
+            api_port=8000,
+            corpus_dir=repo_root / "corpus", # Carpeta que sale en tu captura
         )
 
-
 SETTINGS = Settings.from_env()
+
+# Composition Root: Aquí instanciamos todo para la Banda 10
+def get_chatbot_service():
+    from .adapters.llm.ollama_llm import OllamaLLM
+    from .adapters.retriever.chroma_adapter import ChromaRetriever
+    from .adapters.embedder.ollama_embedder import OllamaEmbedder
+    from .domain.chatbot_service import ChatbotService
+
+    llm = OllamaLLM(base_url=SETTINGS.ollama_url, model=SETTINGS.llm_model)
+    embedder = OllamaEmbedder()
+    retriever = ChromaRetriever(
+        path=str(SETTINGS.chroma_path), 
+        collection_name=SETTINGS.collection_name,
+        embed_fn=embedder.embed
+    )
+    return ChatbotService(llm=llm, retriever=retriever)

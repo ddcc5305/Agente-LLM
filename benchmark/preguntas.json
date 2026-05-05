@@ -1,52 +1,52 @@
 [
   {
     "id": "q1",
-    "categoria": "asignaturas",
-    "pregunta": "¿Hay alguna asignatura sobre desarrollo de videojuegos en GTI?",
-    "fuentes_esperadas": ["3_tercero.txt", "4_cuarto.txt"]
+    "categoria": "factual",
+    "pregunta": "¿Qué es DNI Valencia y cuál es su lema?",
+    "fuentes_esperadas": ["01_faq_dni.txt", "04_filosofia_dni.txt"]
   },
   {
     "id": "q2",
-    "categoria": "asignaturas",
-    "pregunta": "¿En qué consiste la asignatura de Diseño de Interfaces y Experiencia de Usuario?",
-    "fuentes_esperadas": ["3_tercero.txt"]
+    "categoria": "logistica",
+    "pregunta": "¿A qué hora y dónde son los desayunos solidarios?",
+    "fuentes_esperadas": ["01_faq_dni.txt", "07_desayunos_logistica.txt"]
   },
   {
     "id": "q3",
-    "categoria": "asignaturas",
-    "pregunta": "¿Qué se da en la asignatura de Tratamiento Digital de Imagen?",
-    "fuentes_esperadas": ["3_tercero.txt"]
+    "categoria": "logistica",
+    "pregunta": "¿Cómo puedo unirme como voluntario a la asociación?",
+    "fuentes_esperadas": ["09_como_participar.txt"]
   },
   {
     "id": "q4",
-    "categoria": "primer_curso",
-    "pregunta": "¿Qué asignaturas de primero introducen a la programación?",
-    "fuentes_esperadas": ["1_primero.txt"]
+    "categoria": "proyectos",
+    "pregunta": "¿En qué consiste el proyecto COLES y dónde se realiza?",
+    "fuentes_esperadas": ["01_faq_dni.txt", "06_coles_refuerzo.txt"]
   },
   {
     "id": "q5",
-    "categoria": "consejo",
-    "pregunta": "Mi hijo quiere ser diseñador de videojuegos, ¿le sirve este grado?",
-    "fuentes_esperadas": ["3_tercero.txt", "4_cuarto.txt"]
+    "categoria": "sintesis",
+    "pregunta": "¿Qué diferencias hay entre las actividades de RESIS y COLES?",
+    "fuentes_esperadas": ["10_proyectos.txt"]
   },
   {
     "id": "q6",
-    "categoria": "trampa_retrieval",
-    "pregunta": "¿Qué se da en la asignatura de Inteligencia Artificial?",
-    "fuentes_esperadas": ["3_tercero.txt"],
-    "nota": "Caso conocido: el retrieval semántico se distrae con 'Visión Artificial'. Documentado en el Colab §10."
+    "categoria": "contradiccion",
+    "pregunta": "Tengo un documento que dice que los desayunos son a las 8 y otro a las 9, ¿cuál es la hora correcta?",
+    "fuentes_esperadas": ["07_desayunos_logistica.txt", "15_desayunos_100_preguntas.txt"],
+    "nota": "Prueba de detección de contradicciones del corpus."
   },
   {
     "id": "q7",
     "categoria": "fuera_de_ambito",
-    "pregunta": "¿Hay alguna asignatura sobre cocina creativa?",
+    "pregunta": "¿Qué ingredientes lleva una paella valenciana?",
     "fuentes_esperadas": [],
     "respuesta_esperada": "No tengo esa información en mis fuentes"
   },
   {
     "id": "q8",
     "categoria": "fuera_de_ambito",
-    "pregunta": "¿Cuánto cuesta el alquiler en Valencia?",
+    "pregunta": "¿Cómo está el mercado del alquiler en el centro de Valencia?",
     "fuentes_esperadas": [],
     "respuesta_esperada": "No tengo esa información en mis fuentes"
   }

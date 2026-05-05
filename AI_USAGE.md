@@ -9,7 +9,7 @@
 - [ ] Claude (Sonnet / Opus / ...)
 - [ ] GitHub Copilot
 - [ ] Cursor / Windsurf / IDE con asistente integrado
-- [ ] Gemini
+- [X] Gemini
 - [ ] Ollama local con modelos abiertos
 - [ ] Otras: ...
 
