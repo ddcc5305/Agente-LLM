@@ -35,3 +35,11 @@ Thumbs.db
 
 # Resultados de evaluación (regenerables)
 benchmark/runs/
+.vs/Agente-LLM.slnx/FileContentIndex/006eafda-ad27-4396-b84b-1a45b6dd3d6a.vsidx
+.vs/Agente-LLM.slnx/FileContentIndex/19032850-443c-4dfe-92a1-1ffac8f1ccbb.vsidx
+.vs/Agente-LLM.slnx/FileContentIndex/603b8001-1711-4de3-9a1f-1cf2d3a2b445.vsidx
+.vs/Agente-LLM.slnx/v18/.wsuo
+.vs/Agente-LLM.slnx/v18/DocumentLayout.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+benchmark.lnk
