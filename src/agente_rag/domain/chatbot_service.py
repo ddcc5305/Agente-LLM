@@ -6,8 +6,8 @@ class ChatbotService:
         self.llm = llm
         self.retriever = retriever
 
-    def answer(self, question: Question) -> Answer:
-        relevant_chunks = self.retriever.retrieve(question.text, k=5)
+    def answer(self, question: Question, k: int = 15) -> Answer:
+        relevant_chunks = self.retriever.retrieve(question.text, k=k)
         context_str = "\n\n".join([f"[{c.source}]: {c.text}" for c in relevant_chunks])
         
         prompt = f"""Eres un asistente experto de la asociación DNI Valencia.

@@ -21,11 +21,20 @@ from pydantic import BaseModel  # noqa: E402
 from agente_rag.config import SETTINGS  # noqa: E402
 from agente_rag.pipeline import answer  # noqa: E402
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+modelo_actual = os.getenv("LLM_MODEL")
+
+# Esto saldrá en la terminal cada vez que arranques la API
+print(f"\n🚀 CARGANDO AGENTE DNI CON EL MODELO: {modelo_actual} 🚀\n")
+
 
 class QueryIn(BaseModel):
     pregunta: str
     conversation_id: str | None = None
-    k: int = 5
+    k: int = 15
 
 
 app = FastAPI(

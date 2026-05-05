@@ -9,8 +9,14 @@ st.title("🤖 Asistente DNI Valencia")
 # --- Extra: Hugging Face TTS (Voz) ---
 @st.cache_resource
 def load_tts():
-    # Modelo ligero de Facebook para español
-    return pipeline("text-to-speech", model="facebook/mms-tts-spa")
+    # Este modelo es el que menos RAM consume (aprox 150MB)
+    model_id = "facebook/mms-tts-spa"
+    
+    # Forzamos el uso de CPU si tu gráfica (GPU) está llena con Ollama
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    pipe = pipeline("text-to-speech", model=model_id, device=device)
+    return pipe
 
 tts_pipe = load_tts()
 
