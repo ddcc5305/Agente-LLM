@@ -3,28 +3,32 @@
   "WorkspaceRootPath": "D:\\Users\\David\\Downloads\\Agente-LLM\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\.env||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.env||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\build_index.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.env.example||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\adapters\\web\\streamlit_ui.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\agente_rag\\adapters\\web\\streamlit_ui.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\pipeline.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\agente_rag\\pipeline.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\run_eval.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\run_eval.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\build_index.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\api.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:api.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\config.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\agente_rag\\config.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\run_eval.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:scripts\\run_eval.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.env.example||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -39,28 +43,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": ".env",
-              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env",
-              "RelativeDocumentMoniker": ".env",
-              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env",
-              "RelativeToolTip": ".env",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-05-05T14:23:34.498Z",
+              "Title": "build_index.py",
+              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py",
+              "RelativeDocumentMoniker": "scripts\\build_index.py",
+              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py",
+              "RelativeToolTip": "scripts\\build_index.py",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACgAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-05-11T14:38:59.781Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": ".env.example",
-              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example",
-              "RelativeDocumentMoniker": ".env.example",
-              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example",
-              "RelativeToolTip": ".env.example",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAiwBQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-05-05T14:22:06.084Z",
-              "EditorCaption": ""
+              "DocumentIndex": 3,
+              "Title": "api.py",
+              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\api.py",
+              "RelativeDocumentMoniker": "api.py",
+              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\api.py",
+              "RelativeToolTip": "api.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-05-05T14:28:35.595Z"
             },
             {
               "$type": "Document",
@@ -70,43 +73,56 @@
               "RelativeDocumentMoniker": "src\\agente_rag\\pipeline.py",
               "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\pipeline.py",
               "RelativeToolTip": "src\\agente_rag\\pipeline.py",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2026-05-05T14:12:54.687Z"
+              "WhenOpened": "2026-05-05T15:00:44.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "streamlit_ui.py",
+              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\adapters\\web\\streamlit_ui.py",
+              "RelativeDocumentMoniker": "src\\agente_rag\\adapters\\web\\streamlit_ui.py",
+              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\adapters\\web\\streamlit_ui.py",
+              "RelativeToolTip": "src\\agente_rag\\adapters\\web\\streamlit_ui.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-05-05T14:51:04.098Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "build_index.py",
-              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py",
-              "RelativeDocumentMoniker": "scripts\\build_index.py",
-              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\build_index.py",
-              "RelativeToolTip": "scripts\\build_index.py",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
-              "WhenOpened": "2026-05-05T14:00:02.758Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
               "Title": "config.py",
               "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\config.py",
               "RelativeDocumentMoniker": "src\\agente_rag\\config.py",
               "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\src\\agente_rag\\config.py",
               "RelativeToolTip": "src\\agente_rag\\config.py",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAC4AAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-05-05T13:55:54.395Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
+              "Title": ".env.example",
+              "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example",
+              "RelativeDocumentMoniker": ".env.example",
+              "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\.env.example",
+              "RelativeToolTip": ".env.example",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAiwBQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-05T14:22:06.084Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "run_eval.py",
               "DocumentMoniker": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\run_eval.py",
               "RelativeDocumentMoniker": "scripts\\run_eval.py",
               "ToolTip": "D:\\Users\\David\\Downloads\\Agente-LLM\\scripts\\run_eval.py",
               "RelativeToolTip": "scripts\\run_eval.py",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
               "WhenOpened": "2026-05-05T13:54:27.107Z"
             }

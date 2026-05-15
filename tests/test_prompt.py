@@ -1,34 +1,39 @@
-"""Tests del prompt template. No requieren Ollama."""
+"""Tests del prompt anti-alucinación. No requieren Ollama."""
 
-from dataclasses import dataclass
-
-from agente_rag.prompts import REJECTION_PHRASE, build_prompt
-
-
-@dataclass
-class _FakeChunk:
-    source: str
-    text: str
-    score: float = 0.9
-    chunk_id: str = "fake"
+from agente_rag.domain.entities import Chunk, REJECTION_PHRASE
+from agente_rag.domain.chatbot_service import ChatbotService
+from agente_rag.adapters.llm.fake_llm import FakeLLM
+from agente_rag.adapters.retriever.fake_retriever import FakeRetriever
 
 
 def test_prompt_includes_rejection_phrase_literal():
-    prompt = build_prompt("¿Algo?", [])
-    assert REJECTION_PHRASE in prompt, "el prompt debe contener la frase de rechazo literal"
+    llm = FakeLLM()
+    bot = ChatbotService(llm=llm, retriever=FakeRetriever())
+    bot.answer(type("Q", (), {"text": "¿Algo?"})())
+
+    assert REJECTION_PHRASE in llm.last_prompt, \
+        "el prompt debe contener la frase de rechazo literal"
 
 
 def test_prompt_includes_context_with_source_tags():
     chunks = [
-        _FakeChunk(source="3_tercero.txt", text="Inteligencia Artificial — 3º curso"),
-        _FakeChunk(source="2_segundo.txt", text="Programación de aplicaciones móviles"),
+        Chunk(source="03_charlas_abuelitos.txt", text="Charlas con mayores"),
+        Chunk(source="01_faq_dni.txt", text="FAQ sobre DNI"),
     ]
-    prompt = build_prompt("¿Se da IA?", chunks)
-    assert "[3_tercero.txt]" in prompt
-    assert "[2_segundo.txt]" in prompt
-    assert "Inteligencia Artificial" in prompt
+    llm = FakeLLM()
+    bot = ChatbotService(llm=llm, retriever=FakeRetriever(chunks=chunks))
+    from agente_rag.domain.entities import Question
+    bot.answer(Question(text="¿Qué son las charlas?"))
+
+    assert "[03_charlas_abuelitos.txt]" in llm.last_prompt
+    assert "[01_faq_dni.txt]" in llm.last_prompt
+    assert "Charlas con mayores" in llm.last_prompt
 
 
-def test_prompt_includes_question_at_end():
-    prompt = build_prompt("¿Pregunta concreta?", [])
-    assert prompt.rstrip().endswith("RESPUESTA:") or "PREGUNTA: ¿Pregunta concreta?" in prompt
+def test_prompt_includes_question():
+    llm = FakeLLM()
+    bot = ChatbotService(llm=llm, retriever=FakeRetriever())
+    from agente_rag.domain.entities import Question
+    bot.answer(Question(text="¿Pregunta concreta?"))
+
+    assert "¿Pregunta concreta?" in llm.last_prompt

@@ -1,13 +1,11 @@
-"""Agente RAG — repo-ejemplo del Asistente DNI (caso GTI Orienta).
+"""Agente RAG — Asistente DNI Valencia (arquitectura hexagonal).
 
 Estructura del paquete:
-- config: variables de entorno y constantes.
+- domain/: entidades, ports y servicio de dominio (sin deps externas).
+- adapters/: implementaciones concretas (Ollama, PoliGPT, ChromaDB, FAISS...).
+- config: composition root — ensambla adapters según .env.
+- pipeline: adapta el dominio al contrato del enunciado §9.
 - chunker: troceo de los .txt del corpus.
-- embedder: cliente HTTP para embeddings (Ollama).
-- retriever: ChromaDB persistente + retrieval semántico.
-- generator: cliente HTTP para generación (Ollama) con métricas.
-- prompts: plantilla anti-alucinación con cita de fuentes.
-- pipeline: orquestador percibir → decidir → actuar.
 """
 
 __version__ = "0.1.0"

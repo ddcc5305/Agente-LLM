@@ -3,51 +3,105 @@
     "id": "q1",
     "categoria": "factual",
     "pregunta": "¿Qué es DNI Valencia y cuál es su lema?",
-    "fuentes_esperadas": ["01_faq_dni.txt", "04_filosofia_dni.txt"]
+    "fuentes_esperadas": ["01_faq_dni.txt", "04_filosofia_dni.txt"],
+    "ground_truth": "DNI (Damos Nuestra Ilusión) es una asociación juvenil de voluntariado en Valencia dedicada a proyectos sociales como desayunos solidarios, visitas a residencias y refuerzo escolar."
   },
   {
     "id": "q2",
     "categoria": "logistica",
     "pregunta": "¿A qué hora y dónde son los desayunos solidarios?",
-    "fuentes_esperadas": ["01_faq_dni.txt", "07_desayunos_logistica.txt"]
+    "fuentes_esperadas": ["07_desayunos_logistica.txt", "15_desayunos_100_preguntas.txt"],
+    "ground_truth": "Los desayunos solidarios se realizan los domingos por la mañana en distintos puntos de Valencia."
   },
   {
     "id": "q3",
     "categoria": "logistica",
     "pregunta": "¿Cómo puedo unirme como voluntario a la asociación?",
-    "fuentes_esperadas": ["09_como_participar.txt"]
+    "fuentes_esperadas": ["09_como_participar.txt"],
+    "ground_truth": "Para unirse como voluntario hay que contactar con la asociación a través de sus redes sociales o correo electrónico."
   },
   {
     "id": "q4",
     "categoria": "proyectos",
     "pregunta": "¿En qué consiste el proyecto COLES y dónde se realiza?",
-    "fuentes_esperadas": ["01_faq_dni.txt", "06_coles_refuerzo.txt"]
+    "fuentes_esperadas": ["06_coles_refuerzo.txt", "10_proyectos.txt"],
+    "ground_truth": "COLES es un proyecto de refuerzo escolar para niños en riesgo de exclusión social que se realiza en colegios de Valencia."
   },
   {
     "id": "q5",
     "categoria": "sintesis",
     "pregunta": "¿Qué diferencias hay entre las actividades de RESIS y COLES?",
-    "fuentes_esperadas": ["10_proyectos.txt"]
+    "fuentes_esperadas": ["10_proyectos.txt", "05_resis_actividades.txt", "06_coles_refuerzo.txt"],
+    "ground_truth": "RESIS se centra en visitas a residencias de mayores mientras que COLES se enfoca en refuerzo escolar para niños."
   },
   {
     "id": "q6",
     "categoria": "contradiccion",
     "pregunta": "Tengo un documento que dice que los desayunos son a las 8 y otro a las 9, ¿cuál es la hora correcta?",
     "fuentes_esperadas": ["07_desayunos_logistica.txt", "15_desayunos_100_preguntas.txt"],
-    "nota": "Prueba de detección de contradicciones del corpus."
+    "ground_truth": "Existen dos versiones en las fuentes: un documento indica las 8:00 y otro las 7:00/9:00. El agente debe presentar ambas citando las fuentes."
   },
   {
     "id": "q7",
-    "categoria": "fuera_de_ambito",
-    "pregunta": "¿Qué ingredientes lleva una paella valenciana?",
-    "fuentes_esperadas": [],
-    "respuesta_esperada": "No tengo esa información en mis fuentes"
+    "categoria": "factual",
+    "pregunta": "¿Cuántos voluntarios tiene DNI Valencia aproximadamente?",
+    "fuentes_esperadas": ["01_faq_dni.txt", "14_impacto_social.txt"],
+    "ground_truth": "DNI Valencia cuenta con más de 400 voluntarios en activo."
   },
   {
     "id": "q8",
+    "categoria": "logistica",
+    "pregunta": "¿Cuáles son las redes sociales o formas de contacto de DNI?",
+    "fuentes_esperadas": ["12_contacto_redes.txt"],
+    "ground_truth": "DNI tiene presencia en redes sociales como Instagram y se puede contactar por email."
+  },
+  {
+    "id": "q9",
+    "categoria": "proyectos",
+    "pregunta": "¿Qué tipo de actividades se hacen en las residencias de mayores?",
+    "fuentes_esperadas": ["03_charlas_abuelitos.txt", "05_resis_actividades.txt", "16_resis_49_preguntas.txt"],
+    "ground_truth": "En las residencias se realizan charlas, juegos, actividades de entretenimiento y acompañamiento a los mayores."
+  },
+  {
+    "id": "q10",
+    "categoria": "sintesis",
+    "pregunta": "¿Cuál es el impacto social de DNI Valencia según sus documentos?",
+    "fuentes_esperadas": ["14_impacto_social.txt"],
+    "ground_truth": "DNI tiene un impacto positivo en la comunidad valenciana a través de sus proyectos de voluntariado social."
+  },
+  {
+    "id": "q11",
+    "categoria": "factual",
+    "pregunta": "¿Qué es la filosofía 'Damos Nuestra Ilusión'?",
+    "fuentes_esperadas": ["04_filosofia_dni.txt"],
+    "ground_truth": "La filosofía de DNI se basa en el voluntariado juvenil, la ilusión por ayudar y el compromiso social."
+  },
+  {
+    "id": "q12",
+    "categoria": "logistica",
+    "pregunta": "¿Qué horarios y ubicaciones tienen las actividades de DNI?",
+    "fuentes_esperadas": ["11_horarios_ubicaciones.txt"],
+    "ground_truth": "Las actividades de DNI se realizan en distintos horarios y ubicaciones de Valencia según el proyecto."
+  },
+  {
+    "id": "q13",
+    "categoria": "fuera_de_ambito",
+    "pregunta": "¿Qué ingredientes lleva una paella valenciana?",
+    "fuentes_esperadas": [],
+    "ground_truth": "No tengo esa información en mis fuentes"
+  },
+  {
+    "id": "q14",
     "categoria": "fuera_de_ambito",
     "pregunta": "¿Cómo está el mercado del alquiler en el centro de Valencia?",
     "fuentes_esperadas": [],
-    "respuesta_esperada": "No tengo esa información en mis fuentes"
+    "ground_truth": "No tengo esa información en mis fuentes"
+  },
+  {
+    "id": "q15",
+    "categoria": "fuera_de_ambito",
+    "pregunta": "¿Quién ganó el último campeonato de la Liga española?",
+    "fuentes_esperadas": [],
+    "ground_truth": "No tengo esa información en mis fuentes"
   }
 ]

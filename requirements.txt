@@ -1,8 +1,29 @@
+# Core
 requests>=2.31
 chromadb>=0.5
 langchain-text-splitters>=0.2
-rank-bm25>=0.2.2
+python-dotenv>=1.0
+
+# API
 fastapi>=0.110
 uvicorn[standard]>=0.29
-python-dotenv>=1.0
+
+# Retrieval alternativo
+rank-bm25>=0.2.2
+faiss-cpu>=1.7
+
+# Evaluación (banda 8)
+ragas>=0.2
+datasets>=2.0
+
+# Tests
 pytest>=8.0
+ruff>=0.4
+
+# Extras opcionales
+# sentence-transformers>=2.0    # embedder alternativo (descomentar si se usa)
+# openai>=1.0                   # PoliGPT
+# streamlit>=1.30               # frontend
+# transformers>=4.30            # HuggingFace TTS
+# torch                         # HuggingFace TTS
+# boto3                         # AWS Rekognition
