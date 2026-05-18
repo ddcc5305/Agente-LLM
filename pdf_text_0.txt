@@ -1,0 +1,579 @@
+--- PAGE 0 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+Agente RAG: Asistente Inteligente de Conocimiento
+Vicente Rivas Monferrer & Juan M. Alberola
+jalberola@dsic.upv.es
+Grado en Tecnolog´ ıas Interactivas
+Recursos
+C´ odigo base:
+https://github.com/vjrivmon/agente-rag-gti
+Servidores LLM:
+Ollama local: instalado en vuestro port´ atil. Esobligatorioque el sistema funcione con
+Ollama en vuestro local (un sistema que s´ olo funcione con PoliGPT no llega al 5).
+PoliGPT UPV: https://api.poligpt.upv.es.Requiere VPN de la UPVdesde fuera del
+campus.
+Documentaci´ on recomendada:
+Frameworks que vais a usar en la pr´ actica:
+•ChromaDB: vector store por defecto, persistente en disco.
+•LangChain: del paquete oficial usar´ eislangchain-text-splitters(RecursiveCharacterTextSplitter)
+para chunking.
+•Sentence-Transformers: alternativa local a los embeddings de Ollama si no quer´ eis de-
+pender de la red.
+Recuperaci´ on de informaci´ on (retrieval):
+•LangChain — Retrievers: panorama de tipos de retriever (sem´ antico, BM25, MMR,
+h´ ıbrido) y cu´ ando usar cada uno.
+•ChromaDB — Querying Collections: API de b´ usqueda top-kcon filtros y m´ etricas de
+similitud.
+•Sentence-Transformers — Semantic Search: receta completa de b´ usqueda sem´ antica con
+embeddings, incluyendore-ranking.
+•rank-bm25: implementaci´ on ligera de BM25 en Python; ´ util para a˜ nadir un canal l´ exico
+que complemente al sem´ antico.
+•Lewis et al. (2020) — Retrieval-Augmented Generation for Knowledge-Intensive NLP
+Tasks: el paper que introdujo el t´ ermino RAG; lectura corta y formativa.
+Evaluaci´ on:
+--- PAGE 1 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+•RAGAs: framework de m´ etricas espec´ ıficas para sistemas RAG (banda 8).
+Extras opcionales:
+•AWS Rekognition.
+•Hugging Face.
+Agent-CLIs e IDEs (no obligatorios; ver Anexo C):
+Open source: OpenCode, Aider, Zed.
+De pago: Claude Code, Cursor, Gravity, Zen.
+Introducci´ on
+Los sistemas deRetrieval-Augmented Generation (RAG)representan uno de los avances
+m´ as relevantes en la aplicaci´ on pr´ actica de la Inteligencia Artificial. Un agente RAG combina la
+capacidad de recuperar informaci´ on relevante de una base de conocimientos con la generaci´ on de
+respuestas en lenguaje natural mediante un modelo de lenguaje (LLM). A diferencia de un LLM
+est´ andar que utiliza ´ unicamente su conocimiento interno (propenso a generar informaci´ on falsa
+o alucinaciones), un sistema RAG fundamenta sus respuestas en documentos reales, ofreciendo
+respuestas precisas y verificables.
+En esta pr´ actica, desarrollar´ eisen parejas o grupos de tres personasun agente RAG capaz
+de responder preguntas sobre la asociaci´ onDNI (Damos Nuestra Ilusi´ on) Valencia. Esta aso-
+ciaci´ on gestiona m´ ultiples proyectos sociales: desayunos solidarios para personas sin hogar, visitas
+a residencias de ancianos (RESIS), refuerzo escolar para ni˜ nos en riesgo de exclusi´ on (COLES),
+entre otros.
+El objetivo es construir un sistema que, dada una pregunta del usuario, recupere la informaci´ on
+relevante de los documentos proporcionados y genere una respuesta precisa,citando las fuentes
+utilizadas. El sistemano debe inventar informaci´ onque no est´ e en la base de conocimientos.
+Qu´ e vais a construir
+Unagentees un sistema quePERCIBEuna pregunta,DECIDEqu´ e chunks recuperar y
+c´ omo construir el prompt, yACT ´UAdevolviendo una respuesta fundamentada con sus fuentes
+y, cuando proceda, rechazando preguntas que no puede responder.
+El agente debe de responder sobre la asociaci´ onDNI, una asociaci´ on juvenil de voluntariado
+en Valencia con m´ as de 400 voluntarios en activo. El corpus cubre proyectos como desayunos
+solidarios, refuerzo escolar y charlas en residencias de mayores.
+Lo que distingue un agente de un LLM a secas
+Unagentecumple los tres verbos:percibir,decidir,actuar. Si vuestro sistema solamente
+le pasa una pregunta a un LLM y devuelve la respuesta tal cual, no es un agente: es una
+llamada a una API. Vuestro agente debe orquestar al menos: recuperaci´ on de contexto,
+construcci´ on de prompt, llamada al LLM y formateo de salida con fuentes citadas.
+--- PAGE 2 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+¿Qu´ e es un sistema RAG?
+Un sistemaRAG (Retrieval-Augmented Generation)es una arquitectura que mejora las
+respuestas de un modelo de lenguaje proporcion´ andolecontexto relevanteextra´ ıdo de una base
+documental propia. A diferencia de un LLM que responde s´ olo desde su conocimiento interno
+(propenso a alucinar y a cometer errores no deseados), un RAG fundamenta cada respuesta en
+documentos reales y permite citar la fuente exacta.
+El proceso se divide en dos fases (Figura 1):
+1.Fase de indexaci´ on(offline, una ´ unica vez):
+Cargar la base de conocimientos (documentos de texto en formato .txt)
+Dividirlos en fragmentos manejables (chunks).
+Convertir cada fragmento en un vector num´ erico (embedding).
+Almacenar los vectores en unvector store.
+2.Fase de consulta(online, en cada pregunta del usuario):
+Convertir la pregunta del usuario en un vector.
+Buscar los fragmentos m´ as similares en elvector store.
+Construir unpromptcon la pregunta y el contexto recuperado.
+Enviar elpromptal LLM para que genere la respuesta.
+Devolver la respuesta junto con el contexto consultado en las fuentes.
+Fase de indexaci´ on (offline)
+Fase de consulta (online)
+Documentos
+(.txt)
+Chunking
+Segmentaci´ on
+Embeddings
+Vectorizaci´ on
+Vector Store
+(ChromaDB/FAISS)
+Usuario
+Pregunta
+Embedding
+Consulta
+Retrieval
+B´ usqueda
+LLM
+(Ollama / PoliGPT)
+Respuesta
++ Fuentes
+Contexto
+Similitud
+Figura 1: Arquitectura de un sistema RAG. La fase de indexaci´ on se ejecuta una vez (al arrancar
+el agente o cuando cambia el corpus). La fase de consulta se ejecuta en cada pregunta del usuario.
+Pipeline de procesamiento de una consulta
+La Figura 2 desglosa paso a paso lo que ocurre dentro del agente cuando un usuario formula
+una pregunta. Vuestroconsultar.pydebe implementar exactamente este flujo (con las variantes
+de chunking,k, prompt y modelo que justifiqu´ eis en el informe).
+--- PAGE 3 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+Consulta
+del usuario
+Embedding
+de la consulta
+B´ usqueda en
+Vector Store
+Selecci´ on de
+chunks relevantes
+Construcci´ on
+del prompt
+Generaci´ on
+con LLM
+Extracci´ on
+de fuentes
+Respuesta
++ Fuentes
+“¿A qu´ e hora son los desayunos?”
+Vector de X dimensiones (modelo de embed-
+dings).
+Similitud coseno con los chunks almacena-
+dos.
+Top-kfragmentos recuperados m´ as simila-
+res.
+“Contexto: [chunks] / Pregunta: [consulta] /
+Responde s´ olo con el contexto.”
+Modelo a vuestra elecci´ on (Ollama Local /
+PoliGPT
+07 desayunos logistica.txt,
+15 desayunos 100 preguntas.txt.
+Figura 2: Pipeline de procesamiento de una consulta. Cada paso se corresponde con un componente
+identificable enconsultar.py(single-agent) o con una clase del dominio (hexagonal).
+Base de conocimiento DNI
+Se proporcionan16 ficheros de textocon toda la informaci´ on oficial de la asociaci´ on DNI.
+Los temas cubiertos son:
+Informaci´ on general: qu´ e es DNI, filosof´ ıa, valores y preguntas b´ asicas.
+Proyectos: Desayunos Solidarios, Residencias de Mayores, Refuerzo Escolar.
+Log´ ıstica: horarios, ubicaciones, c´ omo participar, contacto.
+Preguntas frecuentes: 100 preguntas sobre Desayunos, 49 sobre Residencias.
+Impacto social: testimonios y datos.
+Algunos ficheros usan formatoQ:/A:(pregunta/respuesta), donde cada par forma una unidad
+sem´ antica natural, mientras que otros son narrativos. El sistema debe ser capaz de manejar ambos
+--- PAGE 4 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+formatos. En este sentido, es importante detectar y respetar esa estructura mejora la calidad
+del retrieval, ya que si vuestro chunker corta entre la pregunta y su respuesta, perd´ eis contexto
+importante.
+Aviso importante sobre contradicciones
+El corpus contiene contradicciones reales entre documentos (por ejemplo, un fichero dice
+que los desayunos son a las 8:00 y otro a las 7:00).Esa contradicci´ on forma parte del
+corpus y NO debe corregirse.Vuestro agente debe ser capaz de detectarla y, si procede,
+presentar las dos versiones citando ambas fuentes. Inventar una respuesta ´ unica que oculte
+la contradicci´ on es alucinaci´ on y penaliza.
+El corpus pesa∼92 KB en total. Es deliberadamente peque˜ no, lo que permite que quepa entero
+en memoria, se indexe en segundos, y permita iterar r´ apido sobre la calidad de las respuestas sin
+coste computacional.
+Importante: el sistema solo debe usar la informaci´ on de estos 16 ficheros. No debe inventar
+datos, fechas, horarios ni contactos que no aparezcan literalmente en los documentos. Si se detecta
+un cambio en la informaci´ on de los 16 ficheros, se penalizar´ a acorde al cambio realizado.
+Teor´ ıa m´ ınima de Agentes LLM
+En esta pr´ actica vais a construir unagente LLM: un sistema en el que un modelo de lenguaje
+act´ ua comocerebrode la toma de decisiones. La diferencia respecto a una llamada directa al LLM
+es justo esa: en vez depregunta entra,respuesta sale, hay unloop de decisiones intermedias
+(qu´ e informaci´ on buscar, c´ omo construir el prompt, cu´ ando rechazar la pregunta) que el agente
+orquesta antes de responder. Un agente LLM se compone, como m´ ınimo, de cinco piezas:
+Modelo de lenguaje: el componente cognitivo que toma decisiones y genera la respuesta
+final. En vuestro caso, el LLM accesible v´ ıa Ollama o PoliGPT.
+Percepci´ on: c´ omo entra la informaci´ on al agente (la pregunta del usuario y, eventualmente,
+contexto adicional como un identificador de conversaci´ on o, en los extras, una imagen o un
+audio).
+Memoria: qu´ e retiene entre interacciones. Distinguid memoria de contexto (lo que cabe en
+el prompt) y memoria a largo plazo (vector store, base de datos, ficheros).
+Herramientas: funciones invocables por el agente (recuperar chunks, llamar a una API
+externa, leer un fichero. . . ). En vuestra pr´ actica, la herramienta principal es el retriever
+sobre el corpus DNI.
+Planificaci´ on: la l´ ogica que decide qu´ e hacer y en qu´ e orden. En la versi´ on m´ as simple es
+una secuencia fija (recuperar→construir prompt→llamar al LLM→formatear salida); en
+versiones m´ as sofisticadas el LLM mismo decide qu´ e herramienta usar y cu´ ando.
+Decisi´ on que ten´ eis que tomar antes de empezar (o no habiendo avanzado mucho)
+Si aspir´ ais al10,empezad desde un inicio con la arquitectura hexagonal. Refac-
+torizar de una arquitectura single-agent a una hexagonal cuando ya ten´ eis un 8 asegurado
+son varios d´ ıas de trabajo y no merece la pena. Si os conform´ ais con un 9, pod´ eis empezar
+con un single-agent y sumar los extras que hay disponibles.
+Para aprender y saber m´ as de la arquitectura hexagonal: vermanual tecnico dni.pdf.
+--- PAGE 5 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+El contrato de interfaz (obligatorio)
+Para desarrollar el c´ odigo, deb´ eis seguir ciertas indicaciones definidas en el siguiente contrato
+de interfaz. Sin respetar este contrato, el corrector no puede evaluar vuestro sistema y la nota ser´ a
+penalizada. Este contratoaplica tanto a single-agent como a hexagonal: lo que cambia es
+c´ omo lo organiz´ ais internamente. En single-agent, todo el flujo cabe enconsultar.py(o detr´ as
+del endpoint). En hexagonal,consultar.py(o el endpoint HTTP) act´ ua comoadapterde entrada
+que invoca el dominio. Por tanto, deb´ eis elegirunade las siguientes dos opciones:
+Opci´ on A — M´ odulo Python
+Vuestro sistema expone una ´ unica funci´ on Python en la ra´ ız del repositorio que el corrector
+importar´ a y llamar´ a. Es la opci´ on m´ as sencilla y la recomendada si no ten´ eis ya un servidor HTTP
+montado por otros motivos. Implementad enconsultar.pyla siguiente funci´ on:
+def consultar(pregunta: str,
+conversation_id: str | None = None) -> dict:
+return {
+"respuesta": str, # texto de la respuesta
+"fuentes": list[str], # ["07_desayunos_logistica.txt", ...]
+"chunks": list[str] | None, # opcional; obligatorio para banda 7
+"metricas": dict | None, # tokens y latencia (banda 7)
+"trazas": list[dict] | None, # opcional
+}
+El corrector har´ afrom consultar import consultary enviar´ a una pregunta por llamada, com-
+probando la forma del diccionario devuelto.
+Opci´ on B — Endpoint HTTP
+Vuestro sistema expone un servidor HTTP que el corrector consulta v´ ıaPOST. ´Util si ya ten´ eis
+frontend o si prefer´ ıs separar el agente como servicio independiente. ServidPOST /querycon el
+mismo JSON que la opci´ on A. El servidor debe estar corriendo durante toda la correcci´ on (re-
+comendado:uvicorncon FastAPI o equivalente). Indicad puerto y URL enfeatures.json(ver
+Secci´ on ); el corrector har´ a la petici´ on a esa URL exacta.
+Bandas de notas
+En funci´ on del trabajo realizado, se definen varias bandas de notas que permiten ir desde un 5
+hasta un 10. A continuaci´ on, se detallan los requisitos para llegar a cada una de estas bandas de
+notas.
+Banda 5 — M´ ınimo para aprobar
+Pipeline RAG completo: carga.txt→chunking→embeddings→vector store (ChromaDB
+o equivalente)→retrieval sem´ antico→LLM→respuesta.
+Prompt anti-alucinaci´ on: ante una pregunta cuya respuesta no est´ e en el corpus, el sistema
+responde literalmente“No tengo esa informaci´ on en mis fuentes”(o equivalente claro).No
+inventa.
+--- PAGE 6 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+El sistema funciona conOllama instalado en la m´ aquina del alumno. Un sistema que
+solo funcione con PoliGPT no llega al 5.
+Informe breve donde se describa la arquitectura, pipeline, decisiones tomadas y dificultades
+encontradas. Debe notarse que es algo personal y no un copy-paste de Chatgpt.
+AI USAGE.mdhonesto y rellenado
+README que explique vuestra soluci´ on.
+GRUPO.md con los integrantes de cada equipo y la funci´ on realizada dentro del mismo
+Banda 6 — Cita del archivo fuente
+Todo lo de banda 5m´ as:
+Cada respuesta cita elarchivo fuentedel que procede el chunk usado, como por ejemplo:
+fuentes: ["07 desayunos logistica.txt", "09 como participar.txt"].
+Las fuentes citadascontienen realmentela informaci´ on de la respuesta. Si un archivo no
+aparece en el contexto recuperado, no puede citarse.
+El informe documenta el chunking aplicado (tama˜ no, overlap, justificaci´ on).
+Banda 7 — Benchmark con 4 modelos
+Todo lo de banda 6m´ as:
+Benchmark documentadocon4 modelossobre el mismo set de preguntas. Habr´ eis de
+probar:
+•2 modelos en PoliGPT(api.poligpt.upv.es, requiere VPN UPV fuera del Cam-
+pus). El cat´ alogo cambia con el tiempo, as´ ı que comprobad qu´ e hay disponible antes de fi-
+jar los dos modelos: con vuestra clave pod´ eis hacerGET https://api.poligpt.upv.es/v1/models
+y os devuelve la lista actual.
+•2 modelos localesv´ ıa Ollama.
+Cada respuesta del benchmark debe registrar como m´ ınimo: tokens de entrada, tokens de
+salida, latencia (s), tokens/s, calidad subjetiva (acierto/fallo en cada pregunta).
+Tabla/Gr´ afico en el informe con los resultados obtenidos y una interpretaci´ on subjetiva de
+los mismos.
+Una breve discusi´ on de los hallazgos m´ as importantes despu´ es de ejecutar el benchmark.
+Todo esto se incluir´ ıa en el informe.
+C´ omo organizar el benchmark.Un benchmark, en esencia, ejecuta el mismo set de pre-
+guntas contra distintos modelos y registra las mismas m´ etricas para poder compararlas. Para esta
+pr´ actica os recomendamos esta receta:
+1.Set fijo de preguntas(10–20). Mezclad factuales directas, s´ ıntesis multi-doc y al menos
+una pregunta fuera de ´ ambito. Guardadlas enbenchmark/preguntas.json.
+2.Un ´ unico pipeline parametrizado por modelo. S´ olo cambia el modelo; el resto (chun-
+king, retrieval, prompt) se mantiene constante. Si no, no estar´ ıais comparando modelos sino
+sistemas distintos.
+--- PAGE 7 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+3.Un script reproducible(benchmark.pyo similar) que itera sobre cada par(modelo,
+pregunta)y guardabenchmark/benchmark.jsoncon respuesta y m´ etricas crudas.
+4.Un postprocesoque producebenchmark/benchmark.mdcon la tabla legible (tokens, laten-
+cia, acierto subjetivo) y un p´ arrafo de interpretaci´ on.
+En el Colab ten´ eis c´ omo se obtienenprompteval count,eval countyeval durationde la
+respuesta de Ollama, que son los datos fuente para tokens y latencia. Para PoliGPT la informaci´ on
+equivalente est´ a enresponse.usage.
+Banda 8 — RAGAs y m´ etricas propias
+Todo lo de banda 7m´ as:
+Evaluaci´ on conRAGAs, framework espec´ ıfico para evaluar sistemas RAG (docs.ragas.io).
+Deb´ eis incluir las cuatro m´ etricas siguientes:
+•faithfulness: grado de fidelidad de la respuesta al contexto recuperado. Detecta
+cu´ ando el agente inventa informaci´ on que no estaba en los chunks.
+•answer relevancy: cu´ anto se ci˜ ne la respuesta a la pregunta planteada (penaliza diva-
+gaciones o respuestas tangenciales).
+•context precision: qu´ e proporci´ on de los chunks recuperados aporta informaci´ on real-
+mente ´ util para la respuesta.
+•context recall: qu´ e proporci´ on de la informaci´ on necesaria para responder est´ a pre-
+sente en los chunks recuperados.
+Para usarlas, RAGAs necesita por cada pregunta: la pregunta, los chunks recuperados (con-
+texto), la respuesta del agente y, para algunas m´ etricas, una respuesta de referencia (ground
+truth). La respuesta de referencia pod´ eis redactarla a mano para vuestro set de preguntas.
+2 m´ etricas propiasdefinidas y justificadas.
+Resultados RAGAs y m´ etricas propiasintegrados en la tabla/gr´ aficadel benchmark
+realizado. La elecci´ on del modelo elegido ha de defenderse con estos datos (debe de ser
+acorde en el informe).
+Todo esto se incluir´ ıa en el informe.
+Banda 10 — Arquitectura hexagonal
+Todo lo de banda 8m´ as:
+Arquitectura hexagonal completa:
+•Dominio puro (entidades + l´ ogica de orquestaci´ on) sin imports de infraestructura.
+•Ports: como m´ ınimoILLMClient,IEmbeddingsClient,IVectorStore,IRetriever.
+•Adapters: como m´ ınimodos implementaciones de cada port(ej.OllamaLLMAdapter
+yPoliGPTLLMAdapter;ChromaAdapteryFAISSAdapter). Cambiar de adapter = 1 l´ ınea
+de configuraci´ on.
+•Tests del dominio que mockean los ports yno requieren red.
+--- PAGE 8 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+README profesional con diagrama de capas e instrucciones para a˜ nadir un adapter nuevo.
+An´ alisis cr´ ıtico: limitaciones identificadas + propuesta de mejora futura.
+Todo esto se incluir´ ıa en el informe.
+Presentaci´ on Oral
+Una vez pase la fecha de entrega, se realizar´ a una presentaci´ on oral, donde cada equipo deber´ a
+seguir este procedimiento:
+1. Se os formular´ auna preguntasobre DNI.
+2. Despu´ es, se observa la respuesta del agente, teniendo en cuenta lo siguiente:
+Acierto(cita la fuente correcta, no inventa, formato razonable).
+Aproximaci´ on con erratas menores(informaci´ on correcta pero sin fuente, o cita
+parcial): banda 5 condicionada a la correcci´ on del resto del informe.
+Alucinaci´ on(inventa informaci´ on que no est´ a en el corpus): nota condicionada a la
+revisi´ on profunda de la entrega y del c´ odigo.
+3. Si el grupo aspira a banda 8 o 10 o declara extras, se puede formular una segunda pregunta
+orientada a ello .
+Extras (suman sobre la nota final)
+A parte de las bandas de notas que se han comentado anteriormente, tambi´ en se pueden sumar
+puntos con 3 posibles extras, dejando una nota m´ axima de 9 en el caso de optar por una arquitectura
+single-agent:
+Extra Cu´ ando aplica Suma
+Frontend Streamlit / Gradio / Next.js / FastAPI+HTML
+funcional, expone el agente, no es solo cosm´ etico.
++1,5
+AWS Rekognition Subir una foto (cartel, horario impreso, post de
+IG. . . ) y el agente verifica si el contenido coincide
+con el corpus oficial.
++1,5
+Hugging Face TTS, STT, NER, clasificaci´ on, etc., con un modelo
+HF integrado en el flujo y ´ util. No vale “hago una
+llamada y tiro la respuesta”.
++1,5
+Material a entregar
+Repositorio y ZIP del c´ odigo fuente de la pr´ actica. Una ´ unica entrega por grupo en Poliformat,
+siguiendo la siguiente estructura.
+C´ odigo y configuraci´ on
+consultar.py(o indicar endpoint HTTP enfeatures.json).
+requirements.txtcon las versiones de los paquetes adecuada.
+.env.example(sin valores reales, solo de ejemplo).
+--- PAGE 9 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+features.jsonsiguiendo la plantilla de la Secci´ on .
+base conocimiento/con los 16.txtsin modificar.
+Si hexagonal:domain/,ports/,adapters/con la estructura convencional.
+Documentos obligatorios
+README.mdcon explicaciones adecuadas de lo que consiste vuestro c´ odigo.
+informe.pdf(≥2 p´ aginas) con:
+•Arquitectura elegidajustificando vuestra elecci´ on.
+•Decisiones tomadas a lo largo del desarrollo.
+•Flujo detallado de una consulta (qu´ e hace cada componente y en qu´ e orden).
+•Resultados sobre las preguntas de prueba realizadas.
+•An´ alisis cr´ ıtico, limitaciones y propuestas de mejora.
+•Dificultades encontradas y c´ omo las resolvisteis.
+AI USAGE.md(honesto y espec´ ıfico). Por cada herramienta IA usada (Claude Code, OpenCo-
+de, Cursor. . . ) indicar: qu´ e tareas hizo, qu´ e ficheros modific´ o, qu´ e partes del c´ odigo son fruto
+de IA sin vuestra posterior revisi´ on.
+benchmark/(banda 7+):
+•benchmark.jsoncon resultados estructurados.
+•benchmark.mdcon tabla legible.
+•Scripts que generan ambos.
+evaluacion/(banda 8+):
+•ragas results.jsoncon las 4 m´ etricas RAGAs.
+•metricas propias.mdcon definici´ on + valores de las 2 m´ etricas que hab´ eis inventado.
+GRUPO.mdlistando: nombres y apellidos de los integrantes de cada grupo y el rol que ha
+asumido cada uno.
+Fichero features.json — declaraci´ on obligatoria en la ra´ ız del repositorio
+Independientemente de la opci´ on del contrato (A o B) y de la arquitectura (single-agent o
+hexagonal),todos los grupos entreganfeatures.jsonen la ra´ ız del ZIP. El corrector lo
+abre antes que cualquier otro fichero: declara qu´ e bandas y extras hab´ eis implementado realmente,
+ys´ olo se eval´ ua lo que est´ e entrue. Marcar contruealgo no implementado es trampa y
+penaliza adicionalmente. A continuaci´ on ten´ eis la plantilla que pod´ eis utilizar para definir este
+fichero. Los valores con|son las alternativas posibles; en vuestro fichero final dejar´ eis s´ olo el valor
+escogido, no la barra:
+{
+"_": "Marca true las capacidades que tu equipo IMPLEMENTA realmente.
+Declarar algo en true sin tenerlo es trampa y penaliza.",
+"interfaz": "opcion_a | opcion_b",
+"modulo": "consultar.py",
+--- PAGE 10 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+"endpoint_http": null,
+"arquitectura": "single_agent | hexagonal",
+"bandas_declaradas": {
+"banda5_pipeline_no_inventa": true | false,
+"banda6_cita_archivo": true | false,
+"banda7_benchmark_4_modelos": true | false,
+"banda8_ragas_metricas_propias": true | false,
+"banda10_hexagonal": true | false
+},
+"extras_declarados": {
+"frontend": true | false,
+"aws_rekognition": true | false,
+"huggingface": true | false
+},
+"modelos_evaluados_en_benchmark": [
+{"alias": "gemma3:4b", "servidor": "ollama_local"},
+{"alias": "gemma3:27b", "servidor": "poligpt"}
+],
+"ollama_local_obligatorio": false,
+"verify_ssl_upv": false
+}
+Campos que deb´ eis tocar:
+interfaz:"opcion a"si entreg´ aisconsultar.py;"opcion b"si servidor HTTP.
+modulo: nombre del fichero con la funci´ onconsultar(por defectoconsultar.py). S´ olo se
+mira siinterfaz="opcion a".
+endpoint http: URL completa (http://localhost:PUERTO/query) siinterfaz="opcion b";
+si no,null.
+arquitectura:"single agent"(cap 9) o"hexagonal"(cap 10).
+bandas declaradas.bandaX: marcadtrues´ olo las que cumpl´ aistodassus condiciones (Ban-
+das 5–10).
+extras declarados.X: marcadtrues´ olo si lo hab´ eis implementado al completo y funciona
+en vuestro port´ atil.
+modelos evaluados en benchmark: lista de los4 aliasque aparecen enbenchmark/benchmark.json
+(banda 7+), con su servidor ("ollama local"o"poligpt"). Vac´ ıo si no hac´ eis benchmark.
+Errores que invalidan la entrega autom´ aticamente:
+features.jsonausente o JSON mal formado.
+Fichero presente pero no es un objeto JSON (lista, n´ umero, cadena).
+interfaz="opcion a"pero no existeconsultar.pyen la ra´ ız.
+interfaz="opcion b"peroendpoint httpesnullo vac´ ıo.
+Banda declaradatruesin los artefactos esperados (p. ej.banda7 benchmark 4 modelos:
+truesinbenchmark/benchmark.json).
+--- PAGE 11 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+Criterios de evaluaci´ on
+La nota se construye entres pasos secuenciales:
+1.Banda alcanzada: Se verifican los requisitos de cada banda en orden.
+2.Ajuste dentro de la banda: la nota final dentro de la banda depende de los criterios
+cualitativos de la tabla siguiente.
+3.Suma de extras y aplicaci´ on de nota m´ axima: se suman los extras declarados y se
+aplica el m´ aximo dentro de cada arquitectura (9 si single-agent, 10 si hexagonal). Despu´ es se
+aplican las penalizaciones que se comentan a continuaci´ on.
+Criterios de ajuste dentro de la banda
+Elemento Qu´ e se valora
+Calidad del c´ odigoLegibilidad, separaci´ on de responsabilidades, naming, manejo de
+errores, ausencia de duplicaci´ on (se aplica el uso de c´ odigo limpio
+DRY - Don’t Repeat Yourself).
+Calidad del informeJustificaci´ on de la soluci´ on aplicada, profundidad del an´ alisis,
+claridad de lo que se comenta.
+Rigor del benchmark
+(banda 7+)
+Reproducibilidad, datos limpios y completos, an´ alisis textual de
+los resultados (no solo tabla).
+M´ etricas propias(banda
+8+)
+Pertinencia al dominio DNI, definici´ on precisa, justificaci´ on.
+Hexagonal(banda 10) Limpieza del dominio (sin imports externos), intercambiabilidad
+real de adapters demostrada, tests del dominio sin red.
+AI USAGE.mdEspecificidad por herramienta y fichero, honestidad sobre c´ odigo
+no revisado.
+Historial gitCommits frecuentes, descriptivos y peque˜ nos.
+Presentaci´ on OralQue responda correctamnte sin alucinar es como m´ ınimo banda
+5. Aplica tambi´ en a defensa de extras.
+Resumen de la f´ ormula:
+Nota final = m´ ın
+
+maxarq,banda +
+X
+extras
+
+−
+X
+penalizaciones
+donde maxarq = 9 para single-agent y 10 para hexagonal.
+Penalizaciones
+Lista de penalizaciones
+SinAI USAGE.mdo vac´ ıo: como m´ aximo optas al 5.
+No se siguen las especificaciones del material a entregar: entre 1 y 5 puntos menos.
+No se detalla correctamente features.json: entre 1 y 5 puntos menos.
+Si se detectan respuestas hardcodeadas en alguna parte del c´ odigo: 5 puntos menos.
+El sistema s´ olo funciona con PoliGPT: m´ aximo un 5.
+--- PAGE 12 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+Anexo A — Preguntas tipo
+Para que os hag´ ais a una idea, las preguntas ser´ an de este estilo:
+Factual directa: “¿Qu´ e es DNI?”.
+Log´ ıstica pr´ actica: “¿C´ omo me apunto a los desayunos solidarios?”.
+S´ ıntesis multi-doc: “¿En qu´ e se diferencian RESIS y COLES?”.
+Fuera de ´ ambito: “¿Cu´ anto cuesta el alquiler en Valencia?”.
+Anexo B — Conexi´ on con Ollama (local) y PoliGPT
+Ollama local
+import requests
+def llamar_ollama(prompt: str, modelo: str = "qwen2.5:3b") -> str:
+response = requests.post(
+"http://localhost:11434/api/generate",
+json={
+"model": modelo,
+"prompt": prompt,
+"stream": False,
+"options": {"temperature": 0.2, "num_predict": 500}
+},
+timeout=300,
+)
+return response.json()["response"]
+PoliGPT
+import os
+from openai import OpenAI
+client = OpenAI(
+base_url="https://api.poligpt.upv.es/v1",
+api_key=os.environ["POLIGPT_API_KEY"],
+)
+resp = client.chat.completions.create(
+model="poligpt",
+messages=[{"role": "user", "content": "..."}],
+temperature=0.2,
+)
+print(resp.choices[0].message.content)
+Anexo C — Buenas pr´ acticas con IDEs ag´ enticas
+Pod´ eis usar cualquier agent-CLI o IDE con LLM integrado para construir vuestra pr´ actica.
+Ninguna es obligatoria.
+--- PAGE 13 ---
+Inteligencia Artificial
+Vicente Rivas & Juan M. Alberola
+ Agente RAG
+Tendencias 2026
+Open source / gratis: OpenCode, Aider, Zed.
+De pago: Claude Code, Cursor, Gravity, Zen.
+Lo que us´ eis no afecta a la nota; lo que afecta esc´ omolo us´ eis.
+Cuatro reglas, cualquier herramienta:
+1.Entended lo que se est´ a haciendo en todo momento.Si el agente produce c´ odigo que
+no sabr´ ıais explicar mejor que no lo entregu´ eis.
+2.Dejad huella en git.Commits frecuentes, descriptivos, peque˜ nos. Un repo con dos commits
+(“initial” y “final”) de 2000 l´ ıneas cada uno es una mala se˜ nal y significa no haber llevado a
+cabo unas buenas pr´ acticas con git.
+3.Pedid que os genere un plan antes de codificar directamente.Casi todos los CLIs
+permiten “modo plan”. De esta manera os asegur´ ais que realmente lo que le hab´ eis dicho
+de hacer es lo que ha entendido y ha planificado. Cualquier error de comprensi´ on que haya
+podido tener lo podr´ eis detectar rapidamente de esta manera, revisadlo con calma.
+4.Declarad todo enAI USAGE.md. No ocult´ eis el uso. S´ e honesto y espec´ ıfico por herramienta
+y fichero.
+Sugerencia operativa:tened un fichero de instrucciones para vuestro CLI (AGENTS.mdpara
+OpenCode,CLAUDE.mdpara Claude Code,.cursorrulespara Cursor) con idioma de comentarios,
+estilo, estructura de carpetas. El CLI lo respetar´ a.

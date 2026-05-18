@@ -30,8 +30,8 @@ OUTPUT_MD = REPO_ROOT / "benchmark" / "benchmark.md"
 DEFAULT_MODELS = [
     {"alias": "gemma3:4b", "servidor": "ollama_local", "backend": "ollama"},
     {"alias": "qwen2.5:3b", "servidor": "ollama_local", "backend": "ollama"},
-    {"alias": "poligpt", "servidor": "poligpt", "backend": "poligpt"},
-    {"alias": "poligpt-2", "servidor": "poligpt", "backend": "poligpt"},
+    {"alias": "gpt-oss-120b", "servidor": "poligpt", "backend": "poligpt"},
+    {"alias": "gemma3:27b", "servidor": "poligpt", "backend": "poligpt"},
 ]
 
 
@@ -49,6 +49,7 @@ def run_benchmark(models: list[dict], questions: list[dict]) -> list[dict]:
                 res = answer(
                     q["pregunta"],
                     model_override=model["alias"],
+                    backend_override=model.get("backend"),
                 )
                 error = None
             except Exception as exc:

@@ -17,10 +17,22 @@
     "huggingface": true
   },
   "modelos_evaluados_en_benchmark": [
-    {"alias": "gemma3:4b", "servidor": "ollama_local"},
-    {"alias": "qwen2.5:3b", "servidor": "ollama_local"},
-    {"alias": "poligpt", "servidor": "poligpt"},
-    {"alias": "poligpt-2", "servidor": "poligpt"}
+    {
+      "alias": "gemma3:4b",
+      "servidor": "ollama_local"
+    },
+    {
+      "alias": "qwen2.5:3b",
+      "servidor": "ollama_local"
+    },
+    {
+      "alias": "gpt-oss-120b",
+      "servidor": "poligpt"
+    },
+    {
+      "alias": "gemma3:27b",
+      "servidor": "poligpt"
+    }
   ],
   "ollama_local_obligatorio": true,
   "verify_ssl_upv": false

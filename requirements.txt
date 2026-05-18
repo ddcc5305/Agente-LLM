@@ -22,7 +22,7 @@ ruff>=0.4
 
 # Extras opcionales
 # sentence-transformers>=2.0    # embedder alternativo (descomentar si se usa)
-# openai>=1.0                   # PoliGPT
+openai>=1.0                   # PoliGPT
 # streamlit>=1.30               # frontend
 # transformers>=4.30            # HuggingFace TTS
 # torch                         # HuggingFace TTS

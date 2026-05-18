@@ -23,14 +23,14 @@ def _get_service():
 
 
 def answer(pregunta: str, conversation_id: Optional[str] = None, k: int = 15,
-           model_override: str | None = None) -> dict:
+           model_override: str | None = None, backend_override: str | None = None) -> dict:
     """Punto de entrada del pipeline RAG.
 
     Si se pasa model_override, crea un servicio con ese modelo (para benchmark).
     """
-    if model_override:
+    if model_override or backend_override:
         from agente_rag.config import get_chatbot_service
-        service = get_chatbot_service(model_override=model_override)
+        service = get_chatbot_service(model_override=model_override, backend_override=backend_override)
     else:
         service = _get_service()
 

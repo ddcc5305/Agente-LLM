@@ -14,8 +14,10 @@ class PoliGPTLLM:
     """Implementa LLMPort conectándose a PoliGPT UPV."""
 
     def __init__(self, api_key: str, base_url: str = "https://api.poligpt.upv.es/v1",
-                 model: str = "poligpt"):
-        self.client = OpenAI(base_url=base_url, api_key=api_key)
+                 model: str = "poligpt", verify_ssl: bool = True):
+        import httpx
+        http_client = httpx.Client(verify=verify_ssl)
+        self.client = OpenAI(base_url=base_url, api_key=api_key, http_client=http_client)
         self.model = model
 
     def generate(self, prompt: str, temperature: float = 0.2) -> GenerationResult:

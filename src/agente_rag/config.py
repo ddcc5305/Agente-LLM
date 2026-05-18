@@ -91,14 +91,16 @@ def _build_retriever(embed_fn):
         )
 
 
-def _build_llm(model_override: str | None = None):
-    """Instancia el LLM según LLM_BACKEND."""
-    if SETTINGS.llm_backend == "poligpt":
+def _build_llm(model_override: str | None = None, backend_override: str | None = None):
+    """Instancia el LLM según LLM_BACKEND o backend_override."""
+    backend = backend_override or SETTINGS.llm_backend
+    if backend == "poligpt":
         from .adapters.llm.poligpt_llm import PoliGPTLLM
         return PoliGPTLLM(
             api_key=SETTINGS.poligpt_api_key,
             base_url=SETTINGS.poligpt_base_url,
             model=model_override or SETTINGS.poligpt_model,
+            verify_ssl=SETTINGS.verify_ssl,
         )
     else:
         from .adapters.llm.ollama_llm import OllamaLLM
@@ -109,11 +111,11 @@ def _build_llm(model_override: str | None = None):
         )
 
 
-def get_chatbot_service(model_override: str | None = None):
+def get_chatbot_service(model_override: str | None = None, backend_override: str | None = None):
     """Composition root: ensambla dominio + adapters."""
     from .domain.chatbot_service import ChatbotService
 
     embedder = _build_embedder()
     retriever = _build_retriever(embedder.embed)
-    llm = _build_llm(model_override)
+    llm = _build_llm(model_override, backend_override)
     return ChatbotService(llm=llm, retriever=retriever)
