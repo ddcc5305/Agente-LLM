@@ -38,10 +38,10 @@ class QueryIn(BaseModel):
 
 
 app = FastAPI(
-    title="Agente RAG — GTI Orienta (repo-ejemplo)",
-    version="0.1.0",
+    title="Agente RAG — Asistente DNI Valencia",
+    version="1.0.0",
     description=(
-        "Repo-ejemplo del Asistente DNI con caso GTI Orienta. "
+        "API del Asistente Inteligente para la asociación DNI Valencia. "
         "Cumple el contrato del enunciado §9 (opción B)."
     ),
 )

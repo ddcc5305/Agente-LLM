@@ -92,5 +92,26 @@ Preguntas: 15
 
 ## Interpretación
 
-<!-- RELLENAR: Añadir análisis textual de los resultados del benchmark -->
-<!-- Discutir: qué modelo rinde mejor, tradeoffs velocidad/calidad, etc. -->
+### Velocidad vs. calidad
+
+**gemma3:27b** (vía PoliGPT) es el claro ganador en latencia media (2.63s) gracias a la
+infraestructura de la UPV, con respuestas concisas y precisas. Es el modelo que recomendamos
+para uso en producción cuando hay acceso a la VPN.
+
+**qwen2.5:3b** es el más rápido en local (72.9 tok/s, latencia media 5.38s) y ofrece buena
+calidad en español. Es el mejor modelo para portátiles con recursos limitados.
+
+**gemma3:4b** rinde bien en calidad (11/12 aciertos) pero es más lento en local que qwen2.5
+(25.6 tok/s vs 72.9 tok/s). Genera respuestas más elaboradas a costa de mayor latencia.
+
+**gpt-oss-120b** (vía PoliGPT) produce las respuestas más extensas pero a un coste de latencia
+muy alto (40s de media, picos de hasta 70s). No compensa para un agente de consulta rápida.
+
+### Aciertos
+
+Los 4 modelos aciertan en 11 de las 12 preguntas de ámbito. Los 4 rechazan correctamente las 3 preguntas fuera de ámbito, lo que valida la efectividad del prompt anti-alucinación independientemente del modelo.
+
+### Conclusión
+
+Para uso local sin red recomendamos **qwen2.5:3b** (velocidad) o **gemma3:4b** (calidad).
+Con acceso a la UPV, **gemma3:27b** es la mejor opción por su equilibrio velocidad-calidad.

@@ -1,100 +1,78 @@
 # Decisiones de arquitectura
 
-> Documento corto que explica el **por qué** detrás de cada elección.
-> No describe **qué** hace cada fichero (eso lo cuenta el código y el
-> README). Aquí va lo que un alumno no puede deducir leyendo el árbol.
+> Por qué hemos tomado cada decisión técnica. No describe *qué* hace cada
+> fichero (eso está en el README), sino el *por qué* detrás.
 
-## 1. Por qué single-agent y no hexagonal
+## 1. Por qué arquitectura hexagonal
 
-Este repo es **plantilla pedagógica**, no aspirante a banda 10. Si os
-diéramos la versión hexagonal terminada, regalaríamos los puntos del
-techo. El propio enunciado §13 deja el 10 como ejercicio del alumno.
+Desde el inicio optamos por la arquitectura hexagonal (ports & adapters) para
+aspirar al 10. La ventaja principal: el dominio (`domain/`) no sabe si detrás
+hay Ollama, PoliGPT o un fake. Esto nos permite:
 
-A cambio, este repo deja **muy claro qué refactorizar**:
+- **Cambiar de LLM** con una línea en `.env` (y lo demostramos en el benchmark
+  con 4 modelos distintos).
+- **Testear el dominio sin red**: `test_chatbot_service.py` usa `FakeLLM` +
+  `FakeRetriever` y corre en milisegundos.
+- **Añadir backends** sin tocar la lógica: FAISS, sentence-transformers o
+  PoliGPT son adapters independientes.
 
-- `src/agente_rag/embedder.py`, `retriever.py`, `generator.py` ya están
-  separados como módulos — son los **futuros adapters**.
-- `src/agente_rag/pipeline.py` es el **futuro `domain/chatbot_service.py`**.
-- `src/agente_rag/config.py` es la **semilla del composition root**.
+La estructura sigue el modelo propuesto en el manual técnico §8:
 
-La diferencia con un hexagonal real está en las dependencias: ahora
-`pipeline.py` *importa* `retriever` y `generator` directamente (acoplamiento
-hacia adapters concretos). En hexagonal, `pipeline.py` recibiría dos
-**ports** por constructor y no sabría si detrás hay Ollama o un fake.
+- `domain/ports.py` — interfaces (`LLMPort`, `EmbedderPort`, `RetrieverPort`, `VectorStorePort`).
+- `domain/entities.py` — dataclasses puras (`Question`, `Answer`, `Chunk`, `GenerationResult`).
+- `domain/chatbot_service.py` — lógica RAG que solo depende de ports y entities.
+- `adapters/` — implementaciones concretas intercambiables.
+- `config.py` — composition root, único módulo que importa adapters concretos.
 
-## 2. Por qué ChromaDB persistente y no in-memory como el Colab
+## 2. Por qué ChromaDB persistente
 
-El Colab usa `chromadb.Client()` (in-memory) porque cada celda se ejecuta en
-una sesión efímera. En vuestro repo el examinador clona, indexa **una vez**,
-y luego hace múltiples preguntas. Reembedar 4 × 27 chunks cada vez son ~30 s
-extra que **se pagan en la oral** delante del profesor. Con
-`PersistentClient(path=...)` el segundo arranque cae a < 2 s.
+El examinador clona, indexa una vez y luego hace múltiples preguntas. Con
+`PersistentClient(path=...)` el segundo arranque tarda < 2s en lugar de
+re-embedar todo el corpus (~30-60s). El directorio `data/chroma/` está en
+`.gitignore` y se regenera con `python scripts/build_index.py`.
 
-Coste: el directorio `data/chroma/` está en `.gitignore`. **Hay que regenerarlo**
-en cada portátil — ese es justo el comando que probaréis en el oral
-(`python scripts/build_index.py`).
+## 3. Por qué `nomic-embed-text`
 
-## 3. Por qué `nomic-embed-text` y no sentence-transformers
-
-`nomic-embed-text` viene en el catálogo de Ollama UPV → un único endpoint
-para LLM y embeddings. Una sola dependencia (`requests`), un solo timeout
-para configurar, un solo error para diagnosticar.
-
-`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` es alternativa
-válida y **funciona sin red** (descarga el modelo una vez). Lo dejamos
-documentado en `manual_desarrollador.pdf §1.2` como opción si Ollama UPV
-está caído.
+Un único endpoint Ollama para LLM y embeddings. Una sola dependencia
+(`requests`), un solo timeout. Como alternativa implementamos un adapter de
+`sentence-transformers` (`st_embedder.py`) que funciona sin Ollama.
 
 ## 4. Por qué chunk_size=500 / overlap=100
 
-Es el "sweet spot" del Colab §3 para texto en español:
+El sweet spot para texto en español según el Colab de la asignatura: un chunk
+típico es un párrafo o medio, suficiente para distinguir temas por contexto.
+Documentos con formato Q:/A: (como `15_desayunos_100_preguntas.txt`) se
+benefician de no cortar entre pregunta y respuesta.
 
-- 100: pierde contexto, recupera trozos inconexos.
-- 2000: el embedding se diluye y el prompt se infla.
-- 500/100: un chunk típico es un párrafo o medio. Suficiente para que el
-  retrieval semántico distinga "Inteligencia Artificial" de "Visión Artificial"
-  por contexto, no por nombre.
+## 5. Por qué `score = 1 - distance`
 
-Si vuestro retrieval falla, **lo primero a tocar son estos dos números**.
+ChromaDB devuelve distancias (más bajo = más cercano), pero el contrato y el
+lenguaje natural esperan scores (más alto = mejor). Hacemos la conversión una
+sola vez en el adapter (`chroma_adapter.py`) para que el dominio razone
+siempre en "score".
 
-## 5. Por qué `score = 1 - distance` en `retriever.py`
+## 6. Por qué `verify_ssl=False` contra UPV
 
-ChromaDB devuelve **distancias** (más bajo = más cercano). El contrato del
-enunciado y el lenguaje natural del informe esperan **scores** (más alto =
-mejor match). Hacemos la conversión una sola vez en el adapter para que el
-dominio razone siempre en "score" y no en "distance".
-
-## 6. Por qué `verify_ssl=False` SOLO contra UPV
-
-El endpoint Ollama UPV usa cert autofirmado: con `verify=True` falla la
-handshake. Con `verify=False` el handshake pasa pero **se desactivan las
-comprobaciones de identidad** — cualquier MITM en la red podría suplantar
-el endpoint. Es asumible **dentro de la red UPV**, no en general. Por eso
-el default en `.env.example` es `VERIFY_SSL=true` y solo se baja en el
-caso documentado.
+El endpoint PoliGPT de la UPV usa certificado autofirmado. Con `verify=True`
+falla el handshake. El default en `.env.example` es `VERIFY_SSL=true` y solo
+se desactiva para PoliGPT dentro de la red UPV.
 
 ## 7. Por qué los tests no llaman a Ollama
 
-Tres razones:
+1. **Reproducibilidad**: no depender de la red.
+2. **Velocidad**: milisegundos vs. segundos por llamada al LLM.
+3. **Cobertura del contrato**: verificar la forma del JSON, no el contenido.
 
-1. **Reproducibilidad**: el CI no tiene acceso a Ollama. Si los tests
-   dependieran de la red, romperían en cada PR.
-2. **Velocidad**: un test que llama al LLM tarda 1-2 s. Con 50 tests, son
-   minutos. Con stubs, son milisegundos.
-3. **Cobertura del contrato sin coste de tokens**: lo importante es
-   verificar la **forma** del JSON de salida, no el contenido.
+La validación E2E con Ollama real se hace con `scripts/run_eval.py` y el
+benchmark (`benchmark/benchmark.py`).
 
-La validación E2E con Ollama real **se hace a mano**: `python scripts/run_eval.py`
-+ leer los outputs en `benchmark/runs/`. Eso es lo que el alumno presentará
-en el informe.
+## 8. Dificultades encontradas
 
-## 8. Decisiones que NO tomamos a propósito
-
-- **No incluimos retrieval híbrido (BM25 + semántico)**. Está en
-  `requirements.txt` (`rank-bm25`) pero no se usa. Es el primer extra
-  natural para subir nota: añadir `bm25.py` y mezclar scores.
-- **No incluimos memoria conversacional**. El contrato acepta
-  `conversation_id` pero el pipeline no la usa. Otro extra abierto.
-- **No incluimos frontend**. El extra "frontend +1.5" se hace encima de
-  este repo, no dentro: añadid un `streamlit_app.py` que llame a
-  `consultar.consultar(...)`.
+- **SSL con PoliGPT**: el certificado autofirmado nos dio problemas con
+  `httpx` (que usa la librería de OpenAI por debajo). Tuvimos que pasar
+  `verify=False` al cliente.
+- **Benchmark con PoliGPT**: las latencias son mucho más variables que con
+  Ollama local. `gpt-oss-120b` en particular oscilaba entre 16s y 70s por
+  pregunta.
+- **Coherencia del chunking**: documentos con formato Q:/A: perdían contexto
+  si el splitter cortaba entre pregunta y respuesta.

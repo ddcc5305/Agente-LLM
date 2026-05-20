@@ -39,17 +39,17 @@ if prompt := st.chat_input("¿A qué hora son los desayunos?"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        # Llamada a la lógica hexagonal[cite: 3, 5]
+        # Llamada a la lógica hexagonal
         with st.spinner("Consultando fuentes oficiales..."):
             res = consultar(prompt)
             
         st.markdown(res["respuesta"])
         
-        # Mostrar fuentes (Banda 6)[cite: 2]
+        # Mostrar fuentes (Banda 6)
         if res.get("fuentes"):
             st.caption(f"Fuentes: {', '.join(res['fuentes'])}")
         
-        # Generar voz (Extra Hugging Face)[cite: 2]
+        # Generar voz (Extra Hugging Face)
         speak(res["respuesta"])
 
     st.session_state.messages.append({"role": "assistant", "content": res["respuesta"]})

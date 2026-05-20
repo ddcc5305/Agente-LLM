@@ -78,9 +78,11 @@ def _build_retriever(embed_fn):
     """Instancia el retriever según RETRIEVER_BACKEND."""
     if SETTINGS.retriever_backend == "faiss":
         from .adapters.retriever.faiss_adapter import FAISSRetriever
+        dim = 384 if SETTINGS.embedder_backend == "st" else 768
         return FAISSRetriever(
             index_path=str(SETTINGS.faiss_path),
             embed_fn=embed_fn,
+            dim=dim,
         )
     else:
         from .adapters.retriever.chroma_adapter import ChromaRetriever
