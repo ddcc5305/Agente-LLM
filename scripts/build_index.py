@@ -1,4 +1,4 @@
-"""Construye el índice vectorial desde corpus/.
+"""Construye el índice vectorial desde base_conocimiento/.
 
 Usa los adapters de la arquitectura hexagonal (embedder + retriever).
 Ejecución: python scripts/build_index.py

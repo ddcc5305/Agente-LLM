@@ -1,7 +1,5 @@
 # Grupo de prácticas
 
-> Plantilla. Rellenadla con vuestros datos al entregar.
-
 ## Integrantes
 
 | Apellidos, Nombre | DNI | Correo UPV | Grado/Curso |

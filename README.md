@@ -58,7 +58,7 @@ Agente-LLM/
 ├── api.py                    # Contrato §9 opción B (POST /query, FastAPI)
 ├── features.json             # Declaración de bandas y extras
 ├── GRUPO.md / AI_USAGE.md    # Documentación obligatoria
-├── corpus/                   # 16 .txt del corpus DNI (no modificar)
+├── base_conocimiento/        # 16 .txt del corpus DNI (no modificar)
 ├── src/agente_rag/
 │   ├── domain/
 │   │   ├── entities.py       # Question, Answer, Chunk, GenerationResult
@@ -114,6 +114,28 @@ EMBEDDER_BACKEND=st       # cambia Ollama embeddings → sentence-transformers
 ```
 
 El dominio no se entera del cambio.
+
+## Diagrama de capas
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                     ADAPTERS (entrada)                   │
+│   consultar.py │ api.py (FastAPI) │ streamlit_ui.py      │
+├──────────────────────────────────────────────────────────┤
+│                    DOMINIO PURO                          │
+│   ChatbotService  │  Question, Answer, Chunk             │
+│   (chatbot_service.py, entities.py)                      │
+│   Solo importa ports.py — sin dependencias externas      │
+├──────────────────────────────────────────────────────────┤
+│                 PORTS (interfaces)                        │
+│   LLMPort │ EmbedderPort │ RetrieverPort │ VectorStorePort│
+├──────────────────────────────────────────────────────────┤
+│                   ADAPTERS (salida)                       │
+│   OllamaLLM    │ PoliGPTLLM   │ FakeLLM                 │
+│   OllamaEmbed  │ STEmbedder   │ FakeEmbedder             │
+│   ChromaRetr   │ FAISSRetr    │ FakeRetriever            │
+└──────────────────────────────────────────────────────────┘
+```
 
 ## Créditos
 

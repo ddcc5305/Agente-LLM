@@ -28,7 +28,7 @@ La estructura sigue el modelo propuesto en el manual técnico §8:
 
 El examinador clona, indexa una vez y luego hace múltiples preguntas. Con
 `PersistentClient(path=...)` el segundo arranque tarda < 2s en lugar de
-re-embedar todo el corpus (~30-60s). El directorio `data/chroma/` está en
+re-embedar todo el base_conocimiento (~30-60s). El directorio `data/chroma/` está en
 `.gitignore` y se regenera con `python scripts/build_index.py`.
 
 ## 3. Por qué `nomic-embed-text`

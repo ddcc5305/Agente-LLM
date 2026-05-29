@@ -47,7 +47,7 @@ class Settings:
             collection_name=os.getenv("COLLECTION_NAME", "dni_valencia"),
             api_host=os.getenv("API_HOST", "127.0.0.1"),
             api_port=int(os.getenv("API_PORT", "8000")),
-            corpus_dir=repo_root / "corpus",
+            corpus_dir=repo_root / "base_conocimiento",
             retriever_backend=os.getenv("RETRIEVER_BACKEND", "chroma"),
             embedder_backend=os.getenv("EMBEDDER_BACKEND", "ollama"),
             llm_backend=os.getenv("LLM_BACKEND", "ollama"),

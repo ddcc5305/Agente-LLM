@@ -122,3 +122,23 @@ Integramos en el pipeline del frontend el modelo de Text-to-Speech `facebook/mms
 
 1.  **Certificados SSL en la red UPV**: Al realizar peticiones HTTP a PoliGPT, el handshake fallaba por el certificado autofirmado de la UPV. Lo solucionamos inyectando la configuración de desactivación de verificación SSL (`verify_ssl=False`) en el adapter de conexión a través de un cliente HTTP personalizado de `openai`/`httpx`.
 2.  **Inconsistencia de dimensiones en FAISS**: Al alternar entre `ollama` (768 dimensiones) y `st` (384 dimensiones), el índice FAISS fallaba en tiempo de ejecución. Lo solucionamos modificando la inicialización del retriever para que determine dinámicamente la dimensión del vector en función del embedder activo.
+
+---
+
+## 8. Análisis Crítico: Limitaciones y Propuestas de Mejora
+
+### Limitaciones Identificadas
+
+1.  **Chunking genérico para formatos heterogéneos**: Usamos `RecursiveCharacterTextSplitter` con parámetros fijos (500/100) para todos los documentos. Los ficheros con formato Q:/A: (como `15_desayunos_100_preguntas.txt`) a veces se cortan entre la pregunta y su respuesta, lo que degrada la calidad del retrieval para esas preguntas concretas.
+2.  **Retrieval puramente semántico**: El sistema depende exclusivamente de la similitud coseno entre embeddings. Preguntas con vocabulario técnico específico (siglas, nombres propios) pueden no recuperar los chunks correctos si el modelo de embeddings no captura bien esas relaciones léxicas.
+3.  **Ventana de contexto limitada**: Con k=15 chunks de 500 caracteres, el prompt puede crecer significativamente. En modelos pequeños (3b-4b), un contexto demasiado largo puede diluir la atención del LLM y empeorar la calidad de la respuesta.
+4.  **Métricas RAGAs con evaluador local**: Al usar `gemma3:4b` como evaluador de RAGAs, la calidad de la evaluación está limitada por la capacidad del propio modelo evaluador. Métricas como `answer_relevancy` (0.30) pueden estar infravaloradas por la dificultad del modelo evaluador para juzgar correctamente la relevancia.
+5.  **Ausencia de memoria conversacional**: El `conversation_id` está definido en el contrato pero no se utiliza activamente. El agente no recuerda preguntas anteriores dentro de una misma sesión.
+
+### Propuestas de Mejora Futura
+
+1.  **Chunking inteligente por formato**: Implementar un pre-procesador que detecte pares Q:/A: y los agrupe como unidades semánticas atómicas antes del splitter, garantizando que nunca se separe una pregunta de su respuesta.
+2.  **Retrieval híbrido (BM25 + semántico)**: Añadir un canal léxico con `rank-bm25` que complemente la búsqueda semántica. Esto mejoraría la recuperación de términos exactos (nombres de proyectos, siglas, direcciones) que la similitud coseno puede pasar por alto.
+3.  **Re-ranking con cross-encoder**: Tras recuperar los top-k chunks, aplicar un segundo paso de re-ranking con un modelo cross-encoder (ej. `cross-encoder/ms-marco-MiniLM-L-6-v2`) para reordenar por relevancia real y reducir el ruido del contexto.
+4.  **Memoria conversacional**: Implementar un historial de conversación (almacenado en el `conversation_id`) que permita preguntas de seguimiento como "¿Y a qué hora?" tras haber preguntado por los desayunos.
+5.  **Evaluación con modelo más potente**: Usar un modelo de mayor capacidad (ej. `gemma3:27b` vía PoliGPT) como evaluador de RAGAs para obtener métricas más fiables y representativas.

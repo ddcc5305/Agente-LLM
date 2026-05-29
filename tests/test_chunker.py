@@ -6,7 +6,7 @@ import pytest
 
 from agente_rag.chunker import Chunk, load_corpus, split_documents
 
-CORPUS = Path(__file__).resolve().parents[1] / "corpus"
+CORPUS = Path(__file__).resolve().parents[1] / "base_conocimiento"
 
 
 def test_load_corpus_returns_sixteen_docs():

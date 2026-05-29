@@ -44,3 +44,8 @@ benchmark/runs/
 .vs/VSWorkspaceState.json
 benchmark.lnk
 *.vsidx
+
+# Ficheros temporales / no entregar
+pdf_text_*.txt
+enunciado.txt
+check_models.py

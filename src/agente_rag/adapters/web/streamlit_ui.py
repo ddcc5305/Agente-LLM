@@ -1,7 +1,7 @@
 import streamlit as st
 import torch
 from transformers import pipeline
-from consultar import consultar
+from agente_rag.pipeline import answer as consultar
 
 st.set_page_config(page_title="DNI Valencia - Asistente", page_icon="🤖")
 st.title("🤖 Asistente DNI Valencia")
