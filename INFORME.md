@@ -53,7 +53,7 @@ graph TD
 1.  **Entrada**: Se invoca `consultar(pregunta)` desde el módulo raíz `consultar.py` o vía `POST /query` en la API.
 2.  **Inicialización**: `config.py` lee el `.env`, instancia los adaptadores concretos y monta el servicio del chatbot.
 3.  **Generación de Embedding**: Se vectoriza la pregunta del usuario utilizando el `EmbedderPort`.
-4.  **Búsqueda (Retrieval)**: El `RetrieverPort` busca los k=5 fragmentos con mayor similitud de coseno en la base de datos vectorial activa.
+4.  **Búsqueda (Retrieval)**: El `RetrieverPort` busca los k=15 fragmentos con mayor similitud de coseno en la base de datos vectorial activa.
 5.  **Ensamblado del Prompt**: Se construye el prompt inyectando los fragmentos de texto recuperados y la pregunta. Se incluyen instrucciones explícitas de no-invención y la frase de rechazo obligatoria: *"No tengo esa información en mis fuentes"*.
 6.  **Generación (Generation)**: El `LLMPort` procesa el prompt y devuelve la respuesta junto con métricas de tokens y latencia.
 7.  **Extracción de Fuentes**: Se recopilan los nombres de archivo (`source`) únicos y ordenados de los metadatos de los fragmentos de texto que se recuperaron originalmente.
