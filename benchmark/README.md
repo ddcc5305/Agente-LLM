@@ -1,40 +1,47 @@
-# Benchmark — set de preguntas tipo
+# Benchmark — Comparativa de 4 modelos
 
-Set reducido de **8 preguntas** para validar el agente sobre el corpus
-GTI Orienta. Cubre cuatro categorías:
+Set fijo de **15 preguntas** para evaluar el agente sobre el corpus DNI Valencia.
+Cubre cuatro categorías:
 
 | Categoría | Cuántas | Para qué |
 |---|---|---|
-| `asignaturas` | 3 | Pregunta directa por temario. Retrieval semántico debería acertar. |
-| `primer_curso` | 1 | Pregunta acotada a un único documento. Útil para detectar si el chunking pierde contexto. |
-| `consejo` | 1 | Pregunta abierta que requiere combinar varios cursos. |
-| `trampa_retrieval` | 1 | El retrieval semántico se distrae (ver Colab §10). Aquí brillaría un retrieval híbrido (BM25 + semántico). |
-| `fuera_de_ambito` | 2 | Deben rechazarse con la frase literal `No tengo esa información en mis fuentes`. |
+| Factual directa | 5 | Pregunta directa sobre proyectos, filosofía o datos de DNI. |
+| Logística práctica | 4 | Horarios, ubicaciones, cómo participar. |
+| Síntesis multi-doc | 3 | Requiere combinar información de varios archivos del corpus. |
+| Fuera de ámbito | 3 | Deben rechazarse con la frase literal `No tengo esa información en mis fuentes`. |
 
-> **Nota pedagógica.** Este set es un *ejemplo* deliberadamente pequeño.
-> Para banda 7 hace falta un benchmark contra **4 modelos distintos**
-> (2 PoliGPT + 2 locales). Este repo no lo trae porque es trabajo del alumno.
+## Modelos evaluados
+
+| Modelo | Servidor | Tipo |
+|---|---|---|
+| `gemma3:4b` | Ollama Local | Modelo local ligero |
+| `qwen2.5:3b` | Ollama Local | Modelo local rápido |
+| `gemma3:27b` | PoliGPT (UPV) | Modelo grande en servidor |
+| `gpt-oss-120b` | PoliGPT (UPV) | Modelo gigante en servidor |
+
+## Archivos
+
+- `preguntas.json` — Las 15 preguntas del set de evaluación.
+- `benchmark.py` — Script que ejecuta las preguntas contra los 4 modelos y genera los resultados.
+- `benchmark.json` — Resultados crudos estructurados (respuestas, tokens, latencia).
+- `benchmark.md` — Tabla legible con resultados y análisis interpretativo.
+- `runs/` — Ejecuciones históricas individuales.
 
 ## Ejecutar
 
 ```bash
-python scripts/run_eval.py
+python benchmark/benchmark.py
 ```
 
-Salida en `benchmark/runs/run_<timestamp>.json`. Cada entrada incluye
-respuesta, chunks recuperados, fuentes y métricas (`prompt_tokens`,
-`output_tokens`, `tokens_per_sec`, `latencia_s`).
+Los resultados se guardan automáticamente en `benchmark/benchmark.json` y se genera `benchmark/benchmark.md` con la tabla comparativa.
 
-## Cómo evaluar los resultados
+## Resultados resumidos
 
-1. **Acierto factual**: ¿la respuesta es correcta según el corpus?
-2. **Cita correcta**: ¿la fuente declarada en `fuentes` contiene
-   realmente la información (banda 6)? Cruzad con `chunks[].text`.
-3. **No-alucinación**: las preguntas `fuera_de_ambito` deben devolver
-   la frase literal de rechazo.
-4. **Latencia**: cualquier `latencia_s > 30` baja a banda 5.
-5. **Tokens/segundo**: para comparar modelos.
+| Modelo | Latencia Media | Tok/s | Aciertos (de 12) | Rechazos (de 3) |
+|---|---|---|---|---|
+| qwen2.5:3b | 5.38 s | 72.9 | 11/12 | 3/3 |
+| gemma3:4b | 10.95 s | 25.6 | 11/12 | 3/3 |
+| gemma3:27b | **2.63 s** | 25.3 | 11/12 | 3/3 |
+| gpt-oss-120b | 40.00 s | 11.1 | 11/12 | 3/3 |
 
-Para banda 8 podéis automatizar (1) y (3) con
-[RAGAs](https://docs.ragas.io/) — `faithfulness` y `answer_relevancy` son
-los dos más útiles para un set tan pequeño.
+Ver `benchmark.md` para el detalle completo por pregunta y la interpretación de los resultados.
