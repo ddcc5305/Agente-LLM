@@ -31,7 +31,7 @@
 | Automatización del script de benchmark y formato | `pipeline.py`, `config.py`, `benchmark/` | **Sí (Funcional).** Gemini estructuró el script para automatizar la ejecución sobre los 4 modelos de forma consecutiva. Nosotros nos encargamos de ejecutar el benchmark, medir los tiempos de respuesta y analizar visualmente las respuestas en el markdown generado. |
 | Detección de fallos y corrección de la documentación | `INFORME.md`, `README.md`, `GRUPO.md` | **Sí (Funcional).** Utilizamos Gemini para auditar que cumplíamos con la rúbrica (como añadir el diagrama Mermaid de la arquitectura, el renombrado de directorios a `base_conocimiento` y estructurar la sección de limitaciones). |
 
-### Código NO revisado a nivel de línea de código (transparencia)
+### Algunos scripts han sido revisados a nivel de línea de código (podriamos habernos dejado algo por revisar, pero hemos revisado todo lo que pudimos)
 
 - **Lógica de inicialización de FAISS y ChromaDB:** Las llamadas a las clases internas de vectorización y persistencia en disco de `chromadb` y `faiss` fueron implementadas directamente por las IAs según los parámetros de configuración y no las hemos modificado línea a línea, limitándonos a comprobar que creaban las carpetas de base de datos correctamente.
 - **Implementación interna de los fakes de test:** Toda la simulación del comportamiento de los modelos y recuperadores fakes (`FakeLLM`, `FakeRetriever`) en los tests unitarios fue generada de manera automática por Claude para acelerar las validaciones.
