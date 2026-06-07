@@ -17,14 +17,18 @@ Sistema RAG (Retrieval-Augmented Generation) que:
 
 ```bash
 # 1. Clonar y crear entorno virtual
-git clone <este-repo>
+git clone https://github.com/ddcc5305/Agente-LLM.git
 cd Agente-LLM
 python -m venv .venv
+# En Windows PowerShell, si falla la activación, ejecuta antes: 
+#Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
 .venv\Scripts\activate     
 pip install -r requirements.txt
 
 # 2. Tener Ollama corriendo con los modelos necesarios
 ollama pull gemma3:4b
+ollama pull qwen2.5:3b
 ollama pull nomic-embed-text
 
 # 3. Copiar y configurar variables de entorno
@@ -33,8 +37,11 @@ copy .env.example .env
 # 4. Construir el índice
 python scripts/build_index.py
 
-# 5. Lanzar una consulta
+# 5. Lanzar una consulta (Consola)
 python consultar.py "¿Qué es DNI Valencia?"
+
+# 6. Lanzar la interfaz web (Streamlit)
+python -m streamlit run src/agente_rag/adapters/web/streamlit_ui.py
 ```
 
 Salida esperada:

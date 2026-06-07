@@ -1,3 +1,11 @@
+import sys
+from pathlib import Path
+
+# Añadimos las rutas al sys.path para poder importar correctamente
+_file_path = Path(__file__).resolve()
+sys.path.insert(0, str(_file_path.parents[3]))  # añade 'src'
+sys.path.insert(0, str(_file_path.parents[4]))  # añade la raíz del proyecto
+
 import streamlit as st
 import torch
 from transformers import pipeline

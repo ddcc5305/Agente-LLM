@@ -34,6 +34,12 @@ def consultar(pregunta: str, conversation_id: str | None = None) -> dict:
 
 
 def _main(argv: list[str]) -> int:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+
     if len(argv) < 2:
         print('Uso: python consultar.py "<pregunta>"', file=sys.stderr)
         return 2
